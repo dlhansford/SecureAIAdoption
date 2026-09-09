@@ -282,6 +282,16 @@
     background: var(--cp-surface-soft); border:1px solid var(--cp-border); border-radius: 999px; padding: 5px 12px;
   }
   .drawer .plane-tag .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--dac); }
+  .drawer .dlearn {
+    display: flex; align-items: center; gap: 10px; margin: 4px 0 18px;
+    padding: 12px 14px; border-radius: 10px; text-decoration: none;
+    background: var(--cp-accent-soft); border: 1px solid var(--cp-accent);
+    color: var(--cp-accent); font-size: 14px; font-weight: 600;
+    transition: background .12s ease, box-shadow .12s ease;
+  }
+  .drawer .dlearn:hover { background: var(--cp-highlight); box-shadow: var(--cp-shadow); }
+  .drawer .dlearn svg { width: 18px; height: 18px; fill: none; stroke: var(--cp-accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
+  .drawer .dlearn .chev { margin-left: auto; color: var(--cp-accent); font-weight: 700; }
 
   @media (max-width: 1080px) {
     .planes { grid-template-columns: 1fr 1fr; }
@@ -337,6 +347,11 @@
     <p id="d-desc"></p>
     <h3>Role in this architecture</h3>
     <p id="d-role"></p>
+    <a class="dlearn" id="d-learn" href="#" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Read the Microsoft Learn docs</span>
+      <span class="chev">&#8599;</span>
+    </a>
     <div id="d-plane-wrap" style="margin-top:6px">
       <span class="plane-tag"><span class="dot"></span><span id="d-plane"></span></span>
     </div>
@@ -457,6 +472,33 @@ const CONNECTORS = [
 ];
 
 /* Build lookup of all nodes for the drawer */
+const LINKS = {
+  gsa:'https://learn.microsoft.com/en-us/entra/global-secure-access/overview-what-is-global-secure-access',
+  shadow:'https://learn.microsoft.com/en-us/defender-cloud-apps/tutorial-shadow-it',
+  genai:'https://learn.microsoft.com/en-us/defender-cloud-apps/what-is-defender-for-cloud-apps',
+  users:'https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview',
+  entra:'https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview',
+  agentid:'https://learn.microsoft.com/en-us/entra/workload-id/workload-identities-overview',
+  leastpriv:'https://learn.microsoft.com/en-us/entra/identity-platform/secure-least-privileged-access',
+  gov:'https://learn.microsoft.com/en-us/entra/id-governance/identity-governance-overview',
+  foundry:'https://learn.microsoft.com/en-us/azure/ai-foundry/what-is-azure-ai-foundry',
+  copilotstudio:'https://learn.microsoft.com/en-us/microsoft-copilot-studio/fundamentals-what-is-copilot-studio',
+  m365:'https://learn.microsoft.com/en-us/copilot/microsoft-365/microsoft-365-copilot-overview',
+  mcp:'https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp',
+  grounding:'https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview',
+  'defender-cloud':'https://learn.microsoft.com/en-us/azure/defender-for-cloud/ai-security-posture',
+  prompt:'https://learn.microsoft.com/en-us/azure/ai-services/content-safety/concepts/jailbreak-detection',
+  xdr:'https://learn.microsoft.com/en-us/defender-xdr/microsoft-365-defender',
+  seccopilot:'https://learn.microsoft.com/en-us/copilot/security/microsoft-security-copilot',
+  'soc-band':'https://learn.microsoft.com/en-us/defender-xdr/incidents-overview',
+  dspm:'https://learn.microsoft.com/en-us/purview/ai-microsoft-purview',
+  dlp:'https://learn.microsoft.com/en-us/purview/dlp-learn-about-dlp',
+  labels:'https://learn.microsoft.com/en-us/purview/sensitivity-labels',
+  insider:'https://learn.microsoft.com/en-us/purview/insider-risk-management',
+  authn:'https://learn.microsoft.com/en-us/entra/identity/authentication/overview-authentication',
+  authz:'https://learn.microsoft.com/en-us/entra/identity-platform/permissions-consent-overview',
+  signals:'https://learn.microsoft.com/en-us/azure/sentinel/connect-data-sources'
+};
 const NODE_INDEX = {};
 PLANES.forEach(p => p.nodes.forEach(n => NODE_INDEX[n.id] = Object.assign({}, n, {cat:p.cat, plane:p.head})));
 DATA_NODES.forEach(n => NODE_INDEX[n.id] = Object.assign({}, n, {plane:'Data Security Foundation \u2014 Microsoft Purview'}));
@@ -527,6 +569,10 @@ function openNode(id){
   document.getElementById('d-role').textContent = n.role || '';
   document.getElementById('d-plane').textContent = n.plane || '';
   document.querySelector('#d-plane-wrap .dot').style.background = color;
+  const learn = document.getElementById('d-learn');
+  const url = LINKS[id];
+  if(url){ learn.href = url; learn.style.display = 'flex'; }
+  else { learn.style.display = 'none'; }
   backdrop.classList.add('open');
   drawer.classList.add('open');
 }
